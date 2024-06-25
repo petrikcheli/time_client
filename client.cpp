@@ -1,7 +1,9 @@
 #include "client.h"
 #include <iostream>
 Client::Client() {}
-Client::~Client() {}
+Client::~Client() {
+    close_socket();
+}
 
 int Client::start_client(){
     socket_server = socket(AF_INET, SOCK_STREAM, 0);
@@ -35,8 +37,6 @@ int Client::connect_to_server(){
 }
 
 int Client::send_command(struct Command& command){
-    std::cout << "введите команду" << std::endl;
-    std::cin >> command.command_type;
     if(send(socket_server,  &command, sizeof(command), 0) < 0){
         std::cerr << "Не удалось отправить команду серверу" << std::endl;
         return -1;
@@ -61,3 +61,11 @@ int Client::close_socket(){
     return 0;
 }
 
+int Client::recv_time(Time_server &t){
+    if(recv(socket_server, &t, sizeof(t), 0) < 0){
+        std::cerr << "Не удалось принять время от сервера" << std::endl;
+        return -1;
+    }
+
+    return 0;
+}
